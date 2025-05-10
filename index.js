@@ -1,8 +1,12 @@
+// require('dotenv').config()
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from "express";
 
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT ||3000;
 const hostname = "127.0.0.1";
 app.use(express.json());
 
@@ -16,33 +20,30 @@ app.post("/teas", (req, res) => {
  return res.status(201).send(newTea);
 });
 
-app.listen(port, hostname, () => {
-  console.log(`server is running at http://${hostname}:${port}`);
-});
 
 app.get("/teas", (req, res) => {
- return res.status(200).send(teaData);
+  return res.status(200).send(teaData);
 });
 
 app.get("/teas/:id", (req, res) => {
   const teaId = parseInt(req.params.id);
   const tea = teaData.find((t) => t.id === teaId);
   if (tea) {
-   return res.status(200).send(tea);
+    return res.status(200).send(tea);
   } else {
-   return res.status(404).send( "tea not found" );
+    return res.status(404).send( "tea not found" );
   }
 });
 app.put("/teas/:id", (req, res) => {
   const teaId = parseInt(req.params.id);
   const tea = teaData.find((t) => t.id === teaId);
   if (!tea) {
-   return res.status(404).send("tea not found");
+    return res.status(404).send("tea not found");
   }
   const { name, price } = req.body;
   tea.name = name;
   tea.price = price;
- return res.status(200).send(tea);
+  return res.status(200).send(tea);
 });
 app.delete("/teas/:id", (req, res) => {
   const teaId = parseInt(req.params.id);
@@ -51,5 +52,10 @@ app.delete("/teas/:id", (req, res) => {
     return res.status(404).send("tea not  found");
   }
   teaData.splice(index, 1);
- return res.status(204).send("deleted");
+  return res.status(204).send("deleted");
 });
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+console.log("PORT from .env:", process.env.PORT);
